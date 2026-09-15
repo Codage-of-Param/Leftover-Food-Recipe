@@ -1,33 +1,12 @@
 services:
-  # Backend FastAPI Service
+  # Backend FastAPI Service (Free Tier)
   - type: web
     name: midnight-chefs-backend
     env: python
+    plan: free
     buildCommand: "cd backend && pip install -r requirements.txt"
     startCommand: "cd backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT"
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.0
-      # Add other necessary backend environment variables manually on the dashboard
-      # e.g., SUPABASE_URL, SUPABASE_KEY, OPENAI_API_KEY if needed.
-
-  # Frontend Next.js Service
-  - type: web
-    name: midnight-chefs-frontend
-    env: node
-    buildCommand: "cd frontend && npm install && npm run build"
-    startCommand: "cd frontend && npm run start"
-    envVars:
-      - key: NODE_VERSION
-        value: 18.17.0
-      # Link to the backend URL automatically created by Render
-      - key: NEXT_PUBLIC_API_URL
-        fromService:
-          type: web
-          name: midnight-chefs-backend
-          envVarKey: RENDER_EXTERNAL_URL
-      # These must be set manually on Render dashboard:
-      - key: NEXT_PUBLIC_SUPABASE_URL
-        sync: false
-      - key: NEXT_PUBLIC_SUPABASE_ANON_KEY
-        sync: false
+      # You will add your API keys (OpenAI, Supabase, etc.) securely on the Render Dashboard
