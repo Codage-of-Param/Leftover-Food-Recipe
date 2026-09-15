@@ -1,0 +1,336 @@
+@import "tailwindcss";
+
+:root {
+  /* Light mode tokens from user color scheme */
+  --bg-app: #FFF8F0;
+  --bg-surface: #FFFFFF;
+  --text-primary: #2B2320;
+  --text-secondary: #6B5F58;
+  --color-primary: #E8622C;
+  --color-primary-hover: #D1511D;
+  --color-secondary-eco: #2D5A3D;
+  --color-border: #E8DFD5;
+
+  /* Semantic states (Light) */
+  --state-expiring: #D98C1F;
+  --state-expiring-bg: #FDF5E8;
+  --state-wasted: #C43D3D;
+  --state-wasted-bg: #FDF0F0;
+  --state-saved: #2D7A4F;
+  --state-saved-bg: #EBF7F0;
+
+  --color-background: var(--bg-app);
+  --color-foreground: var(--text-primary);
+}
+
+.dark {
+  /* Dark mode tokens from user color scheme */
+  --bg-app: #1C1815;
+  --bg-surface: #28221D;
+  --text-primary: #F5EDE4;
+  --text-secondary: #B3A69B;
+  --color-primary: #F0803F;
+  --color-primary-hover: #F29255;
+  --color-secondary-eco: #4E9470;
+  --color-border: #3A332C;
+
+  /* Semantic states (Dark) */
+  --state-expiring: #F4A736;
+  --state-expiring-bg: #382815;
+  --state-wasted: #E56A6A;
+  --state-wasted-bg: #3A1C1C;
+  --state-saved: #4FBE7F;
+  --state-saved-bg: #1B3527;
+
+  --color-background: var(--bg-app);
+  --color-foreground: var(--text-primary);
+}
+
+@theme {
+  --font-sans: var(--font-inter);
+  
+  --color-background: var(--bg-app);
+  --color-foreground: var(--text-primary);
+}
+
+@custom-variant dark (&:is(.dark *));
+
+body {
+  background-color: var(--bg-app);
+  color: var(--text-primary);
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+/* Base surface and background overrides */
+.bg-white {
+  background-color: var(--bg-surface) !important;
+}
+
+.dark .dark\:bg-gray-900,
+.dark .dark\:bg-gray-950 {
+  background-color: var(--bg-app) !important;
+}
+
+.dark .dark\:bg-gray-800 {
+  background-color: var(--bg-surface) !important;
+}
+
+.bg-gray-50 {
+  background-color: var(--bg-app) !important;
+}
+
+/* Primary Button & Active Nav Color Overrides (#E8622C / #F0803F) */
+.bg-emerald-600,
+.bg-emerald-500 {
+  background-color: var(--color-primary) !important;
+}
+
+.hover\:bg-emerald-700:hover,
+.hover\:bg-emerald-600:hover {
+  background-color: var(--color-primary-hover) !important;
+}
+
+.bg-emerald-50,
+.bg-emerald-50\/50,
+.bg-emerald-50\/60,
+.bg-emerald-50\/70 {
+  background-color: var(--state-saved-bg) !important;
+}
+
+.dark .dark\:bg-emerald-950,
+.dark .dark\:bg-emerald-900,
+.dark .dark\:bg-emerald-900\/20,
+.dark .dark\:bg-emerald-900\/30,
+.dark .dark\:bg-emerald-900\/40,
+.dark .dark\:bg-emerald-900\/50,
+.dark .dark\:bg-emerald-900\/60,
+.dark .dark\:bg-emerald-950\/30,
+.dark .dark\:bg-emerald-950\/40,
+.dark .dark\:bg-emerald-950\/60 {
+  background-color: var(--state-saved-bg) !important;
+}
+
+/* Fallback for dark:bg-gray-700 to match warm theme surface rather than cold slate blue */
+.dark .dark\:bg-gray-700 {
+  background-color: color-mix(in srgb, var(--bg-surface) 80%, var(--text-primary)) !important;
+}
+
+/* Ingredient Chips & Badges - Fully Harmonized with Theme in both Light & Dark modes */
+.ingredient-chip {
+  background-color: var(--state-saved-bg) !important;
+  color: var(--state-saved) !important;
+  border-color: color-mix(in srgb, var(--state-saved) 30%, transparent) !important;
+}
+
+.ingredient-chip:hover {
+  background-color: color-mix(in srgb, var(--state-saved-bg) 75%, var(--state-saved)) !important;
+}
+
+.ingredient-chip-urgent {
+  background-color: var(--state-wasted-bg) !important;
+  color: var(--state-wasted) !important;
+  border-color: color-mix(in srgb, var(--state-wasted) 35%, transparent) !important;
+}
+
+/* Text Colors */
+.text-gray-900,
+.text-gray-800,
+.dark\:text-white,
+.dark\:text-gray-100,
+.dark\:text-gray-200 {
+  color: var(--text-primary) !important;
+}
+
+.text-gray-600,
+.text-gray-500,
+.text-gray-400,
+.dark\:text-gray-300,
+.dark\:text-gray-400,
+.dark\:text-gray-500 {
+  color: var(--text-secondary) !important;
+}
+
+.text-emerald-600,
+.text-emerald-700,
+.text-emerald-800 {
+  color: var(--color-primary) !important;
+}
+
+.dark .dark\:text-emerald-300,
+.dark .dark\:text-emerald-400,
+.dark .dark\:text-emerald-500 {
+  color: var(--color-primary) !important;
+}
+
+/* Border / Divider Overrides (#E8DFD5 / #3A332C) */
+.border-gray-100,
+.border-gray-200,
+.border-emerald-100,
+.border-emerald-200 {
+  border-color: var(--color-border) !important;
+}
+
+.dark .dark\:border-gray-700,
+.dark .dark\:border-gray-800,
+.dark .dark\:border-emerald-800,
+.dark .dark\:border-emerald-900 {
+  border-color: var(--color-border) !important;
+}
+
+/* Eco Score Badges / Secondary Eco Green (#2D5A3D / #4E9470) */
+.eco-badge,
+.bg-green-500,
+.bg-green-600 {
+  background-color: var(--color-secondary-eco) !important;
+}
+
+/* Semantic State: Expiring soon (Amber) */
+.text-amber-500,
+.text-amber-600,
+.text-amber-700 {
+  color: var(--state-expiring) !important;
+}
+.bg-amber-50,
+.bg-amber-100 {
+  background-color: var(--state-expiring-bg) !important;
+}
+.bg-amber-500,
+.bg-amber-600 {
+  background-color: var(--state-expiring) !important;
+}
+
+/* Semantic State: Wasted / Expired (Red) */
+.text-red-500,
+.text-red-600,
+.text-red-700 {
+  color: var(--state-wasted) !important;
+}
+.bg-red-50,
+.bg-red-100 {
+  background-color: var(--state-wasted-bg) !important;
+}
+.bg-red-500,
+.bg-red-600 {
+  background-color: var(--state-wasted) !important;
+}
+
+/* Semantic State: Saved / Used (Green) */
+.text-green-700,
+.text-green-800 {
+  color: var(--state-saved) !important;
+}
+.bg-green-50,
+.bg-green-100 {
+  background-color: var(--state-saved-bg) !important;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.98); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes slideLeft {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes bounceShort {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-slide-left {
+  animation: slideLeft 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-bounce-short {
+  animation: bounceShort 0.6s ease-in-out;
+}
+
+/* ==========================================================================
+   Custom Themed Scrollbars for Web-App & Chat-Based Recipe Generator
+   ========================================================================== */
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--color-primary) 35%, transparent) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--color-primary) 35%, transparent);
+  border-radius: 9999px;
+  transition: background 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary);
+}
+
+.chat-scrollbar,
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--color-primary) 50%, transparent) transparent;
+}
+
+.chat-scrollbar::-webkit-scrollbar,
+.custom-scrollbar::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+.chat-scrollbar::-webkit-scrollbar-track,
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: color-mix(in srgb, var(--bg-surface) 60%, transparent);
+  border-radius: 9999px;
+  margin: 6px 2px;
+}
+
+.chat-scrollbar::-webkit-scrollbar-thumb,
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--color-primary) 45%, transparent);
+  border-radius: 9999px;
+  border: 1px solid transparent;
+  background-clip: padding-box;
+  transition: background 0.2s ease;
+}
+
+.chat-scrollbar::-webkit-scrollbar-thumb:hover,
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary);
+}
+
+.dark .chat-scrollbar,
+.dark .custom-scrollbar {
+  scrollbar-color: color-mix(in srgb, var(--color-primary) 55%, transparent) transparent;
+}
+
+.dark .chat-scrollbar::-webkit-scrollbar-track,
+.dark .custom-scrollbar::-webkit-scrollbar-track {
+  background: color-mix(in srgb, var(--bg-surface) 40%, transparent);
+}
+
+.dark .chat-scrollbar::-webkit-scrollbar-thumb,
+.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--color-primary) 55%, transparent);
+}
+
+.dark .chat-scrollbar::-webkit-scrollbar-thumb:hover,
+.dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary);
+}
+
