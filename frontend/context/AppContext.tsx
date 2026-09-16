@@ -442,7 +442,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           user_id: guestId,
           recipe_id: r.id
         }));
-        await supabase.from("saved_recipes").upsert(savedInserts, { onConflict: "user_id, recipe_id" }).catch(() => {});
+        try {
+          await supabase.from("saved_recipes").upsert(savedInserts, { onConflict: "user_id, recipe_id" });
+        } catch (e) {}
       }
 
       const guestProfile = {
@@ -504,7 +506,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           user_id: newProfile.id,
           recipe_id: r.id
         }));
-        await supabase.from("saved_recipes").insert(savedInserts).catch(() => {});
+        try {
+          await supabase.from("saved_recipes").insert(savedInserts);
+        } catch (e) {}
 
         setUserProfile({
           id: newProfile.id,
