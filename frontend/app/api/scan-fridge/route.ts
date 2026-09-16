@@ -69,13 +69,16 @@ export async function POST(req: Request) {
     const base64 = Buffer.from(arrayBuffer).toString("base64");
 
     const OPENROUTER_VISION_MODELS = [
-      "inclusionai/ling-3.0-flash-vl:free",
-      "openrouter/free"
+      "google/gemini-2.0-flash-lite-preview-02-05:free",
+      "meta-llama/llama-3.2-90b-vision-instruct:free",
+      "qwen/qwen-vl-plus:free",
+      "inclusionai/ling-3.0-flash-vl:free"
     ];
 
     let rawText = "";
     let openrouterSuccess = false;
 
+    let lastError = "";
     for (const orModel of OPENROUTER_VISION_MODELS) {
       try {
         const openrouterPayload = {
@@ -109,16 +112,18 @@ export async function POST(req: Request) {
           break;
         } else {
           const errText = await orRes.text();
-          console.error(`OpenRouter model ${orModel} returned ${orRes.status}: ${errText.slice(0, 150)}`);
+          lastError = `OpenRouter model ${orModel} returned ${orRes.status}: ${errText.slice(0, 150)}`;
+          console.error(lastError);
         }
       } catch (orErr: any) {
-        console.error(`OpenRouter model ${orModel} threw error:`, orErr.message);
+        lastError = `OpenRouter model ${orModel} threw error: ${orErr.message}`;
+        console.error(lastError);
       }
     }
 
     if (!openrouterSuccess) {
       return NextResponse.json(
-        { error: "OpenRouter free vision model failed to process image. Please try again." },
+        { error: "OpenRouter free vision model failed to process image. Please try again.", detail: lastError },
         { status: 502 }
       );
     }
