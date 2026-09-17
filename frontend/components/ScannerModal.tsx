@@ -137,15 +137,7 @@ export default function ScannerModal() {
     setItems((prev) => [...prev, newItem]);
   };
 
-  const finalizeAndGenerate = () => {
-    const validItems = items.filter(
-      (i) => i.status === "confirmed" || (i.status === "suggested" && i.confidence > 0)
-    );
-    
-    // Auto-confirm suggested if user just hits next, but normally we'd force them to review.
-    // For good UX, we will assume anything left as "suggested" is accepted,
-    // but anything "uncertain" is ignored unless manually confirmed.
-    
+  const finalizeAndSaveMock = () => {
     const itemsToAdd = items.filter(i => i.status === "confirmed" || i.status === "suggested");
     
     if (itemsToAdd.length === 0) {
@@ -173,7 +165,10 @@ export default function ScannerModal() {
       timeMinutes: 18,
       servings: 2,
       cals: 360,
-      protein: "16g Protein",
+      protein: "16g",
+      carbs: "35g",
+      fat: "14g",
+      fiber: "8g",
       isVeg: true,
       ingredients: itemsToAdd.map((i) => ({
         name: i.name,
@@ -194,6 +189,26 @@ export default function ScannerModal() {
     showToast(`Added ${itemsToAdd.length} items to pantry & saved recipe to Scanned Fridge section!`, "success");
     setScannerImage(null);
     setActiveTab("recipes");
+  };
+
+  const finalizeAndOpenAI = () => {
+    const itemsToAdd = items.filter(i => i.status === "confirmed" || i.status === "suggested");
+    
+    if (itemsToAdd.length === 0) {
+      showToast("No ingredients confirmed!", "alert");
+      return;
+    }
+
+    itemsToAdd.forEach((item) => {
+      const cats = ["Produce", "Dairy", "Pantry", "Proteins", "Grains"] as const;
+      const cat = cats[Math.floor(Math.random() * cats.length)];
+      addInventoryItem(item.name, "1 unit", cat, 5, false);
+    });
+
+    showToast(`Added ${itemsToAdd.length} items to pantry. Launching AI generator...`, "success");
+    setScannerImage(null);
+    setActiveTab("recipes");
+    setTimeout(() => setIsGenerateModalOpen(true), 300); // slight delay for smooth transition
   };
 
   return (
@@ -437,15 +452,22 @@ export default function ScannerModal() {
               </div>
 
               {/* Footer Actions */}
-              <div className="p-5 border-t border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-900/50 shrink-0">
+              <div className="p-4 sm:p-5 border-t border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-900/50 shrink-0 flex gap-3">
                 <button
-                  onClick={finalizeAndGenerate}
+                  onClick={finalizeAndSaveMock}
                   disabled={isScanning || items.length === 0}
-                  className="w-full bg-emerald-600 hover:bg-emerald-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-bold py-3.5 rounded-xl shadow-md transition-all flex items-center justify-center space-x-2"
+                  className="flex-1 bg-gray-200 hover:bg-gray-300 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-800 dark:text-gray-200 font-bold py-3.5 rounded-xl shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <span>Confirm & Generate Recipes</span>
+                  Save to Pantry
+                </button>
+                <button
+                  onClick={finalizeAndOpenAI}
+                  disabled={isScanning || items.length === 0}
+                  className="flex-1 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-bold py-3.5 rounded-xl shadow-md transition-all flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <span>Generate with AI</span>
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
                   </svg>
                 </button>
               </div>
