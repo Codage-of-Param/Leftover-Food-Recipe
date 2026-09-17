@@ -23,9 +23,9 @@ export default function Topbar() {
   }
 
   return (
-    <header className="sticky top-0 z-40 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-100 dark:border-gray-800 px-4 py-3 sm:px-8 sm:py-4 flex items-center justify-between">
+    <header className="sticky top-0 z-40 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-100 dark:border-gray-800 px-3 py-3 sm:px-8 sm:py-4 flex flex-wrap md:flex-nowrap items-center justify-between gap-y-3">
       {/* Mobile Hamburger Menu */}
-      <div className="flex items-center space-x-3">
+      <div className="flex items-center space-x-2 sm:space-x-3 order-1">
         <button
           onClick={() => setIsMobileSidebarOpen(true)}
           className="md:hidden p-2 -ml-2 rounded-xl text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
@@ -45,7 +45,7 @@ export default function Topbar() {
       </div>
 
       {/* Search Bar */}
-      <div className="flex-1 max-w-xl mx-4 sm:mx-8 relative">
+      <div className="w-full md:flex-1 md:max-w-xl md:mx-8 relative order-3 md:order-2 mt-1 md:mt-0">
         <svg 
           className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500" 
           fill="none" 
@@ -83,7 +83,7 @@ export default function Topbar() {
       </div>
 
       {/* Right Actions */}
-      <div className="flex items-center space-x-3 sm:space-x-4 relative">
+      <div className="flex items-center space-x-2 sm:space-x-4 relative order-2 md:order-3">
         {/* AI Assistant Button - Redirects to AI Recipe Chat Tab */}
         <button
           onClick={() => setActiveTab("chat-generator")}
@@ -124,10 +124,10 @@ export default function Topbar() {
         {/* User Profile Badge */}
         <button
           onClick={() => setIsProfileModalOpen(true)}
-          className="flex items-center space-x-2.5 pl-2 pr-4 py-1.5 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-full transition-colors border border-gray-100 dark:border-gray-800"
+          className="flex items-center space-x-2.5 p-1 sm:pl-2 sm:pr-4 sm:py-1.5 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-full transition-colors border border-transparent sm:border-gray-100 dark:sm:border-gray-800"
           title="Account Profile & Allergies"
         >
-          <div className="w-8 h-8 rounded-full bg-emerald-600 dark:bg-emerald-700 text-white flex items-center justify-center font-bold text-sm shadow-sm">
+          <div className="w-8 h-8 rounded-full bg-emerald-600 dark:bg-emerald-700 text-white flex items-center justify-center font-bold text-sm shadow-sm shrink-0">
             {userProfile?.name ? userProfile.name.charAt(0).toUpperCase() : "U"}
           </div>
           <div className="hidden sm:flex flex-col items-start">
