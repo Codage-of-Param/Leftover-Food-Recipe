@@ -52,7 +52,7 @@ export default function RecipeChatCard({ recipe, isActive = true }: RecipeChatCa
     <>
       <div 
         onClick={() => setShowModal(true)}
-        className={`group bg-white dark:bg-gray-800 border rounded-3xl p-5 cursor-pointer transition-all duration-500 w-full flex flex-col h-full overflow-hidden
+        className={`group bg-white dark:bg-gray-800 border rounded-3xl p-4 xs:p-5 cursor-pointer transition-all duration-500 w-full flex flex-col h-full overflow-hidden
           ${isActive 
             ? 'border-emerald-300 dark:border-emerald-700 shadow-xl scale-[1.02]' 
             : 'border-emerald-50 dark:border-gray-700/50 hover:border-emerald-200 dark:hover:border-emerald-800 scale-95 opacity-80'}
@@ -131,7 +131,7 @@ export default function RecipeChatCard({ recipe, isActive = true }: RecipeChatCa
         </div>
 
         {/* Nutrition Bar */}
-        <div className="flex items-center justify-between gap-2 py-3 px-4 bg-white dark:bg-gray-800 rounded-2xl text-xs font-bold text-gray-700 dark:text-gray-300 border border-gray-100 dark:border-gray-700 mt-auto shadow-sm">
+        <div className="flex items-center justify-between gap-1 xs:gap-2 py-2.5 xs:py-3 px-3 xs:px-4 bg-white dark:bg-gray-800 rounded-2xl text-[10px] xs:text-xs font-bold text-gray-700 dark:text-gray-300 border border-gray-100 dark:border-gray-700 mt-auto shadow-sm">
           <div className="flex items-center gap-1.5">
             <svg className="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />

@@ -86,11 +86,11 @@ export default function RecipeCarousel({ recipes }: RecipeCarouselProps) {
         <div 
           ref={scrollRef}
           onScroll={handleScroll}
-          className="flex gap-5 overflow-x-auto snap-x snap-mandatory py-4 px-8 scrollbar-hide"
+          className="flex gap-4 sm:gap-5 overflow-x-auto snap-x snap-mandatory py-4 px-4 xs:px-8 scrollbar-hide"
           style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
         >
           {recipes.map((recipe, idx) => (
-            <div key={idx} className="snap-center shrink-0 w-[85%] sm:w-[360px] h-full flex items-stretch">
+            <div key={idx} className="snap-center shrink-0 w-[280px] xs:w-[320px] sm:w-[360px] h-full flex items-stretch">
               <RecipeChatCard recipe={recipe} isActive={idx === activeIndex} />
             </div>
           ))}
