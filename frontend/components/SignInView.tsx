@@ -7,10 +7,17 @@ import { supabase } from "@/lib/supabase";
 
 export default function SignInView() {
   const { isAuthenticated, showToast, setIsAuthenticated, clearScannedFridgeRecipes } = useApp();
-  const [email, setEmail] = useState("test@test.com");
-  const [password, setPassword] = useState("password123");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
+
+  const toggleAuthMode = () => {
+    setIsSignUp(!isSignUp);
+    setEmail("");
+    setPassword("");
+    setAuthError(null);
+  };
 
   const [authError, setAuthError] = useState<string | null>(null);
 
@@ -208,7 +215,7 @@ export default function SignInView() {
           <p>
             {isSignUp ? "Already have an account? " : "Don't have an account? "}
             <span 
-              onClick={() => setIsSignUp(!isSignUp)}
+              onClick={toggleAuthMode}
               className="text-emerald-600 dark:text-emerald-400 font-semibold cursor-pointer"
             >
               {isSignUp ? "Sign in" : "Sign up"}
