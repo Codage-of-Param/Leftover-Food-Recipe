@@ -4,7 +4,7 @@ import React from "react";
 import { useApp } from "@/context/AppContext";
 
 export default function Sidebar() {
-  const { activeTab, setActiveTab, urgentItemsCount, savedRecipeIds, isMobileSidebarOpen, setIsMobileSidebarOpen } = useApp();
+  const { activeTab, setActiveTab, urgentItemsCount, savedRecipeIds, isMobileSidebarOpen, setIsMobileSidebarOpen, userProfile, setIsProfileModalOpen } = useApp();
 
   const navItems: Array<{
     id: "dashboard" | "inventory" | "recipes" | "saved" | "chat-generator";
@@ -142,6 +142,26 @@ export default function Sidebar() {
         </p>
         <div className="mt-2 text-[10px] font-semibold text-emerald-700 dark:text-emerald-400 hover:underline">
           View pantry shelf-life →
+        </div>
+      </div>
+
+      {/* User Profile Area */}
+      <div 
+        onClick={() => setIsProfileModalOpen(true)}
+        className="p-4 border-t border-gray-100 dark:border-gray-800 flex items-center gap-3 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors mt-auto"
+      >
+        <div className="w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-900/50 flex items-center justify-center shrink-0">
+          <svg className="w-5 h-5 text-emerald-600 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+          </svg>
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-bold text-gray-900 dark:text-gray-100 truncate">
+            {userProfile?.name || "Chef"}
+          </p>
+          <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+            {userProfile?.dietaryPreference !== "Any" ? userProfile?.dietaryPreference : "Edit Profile"}
+          </p>
         </div>
       </div>
     </aside>

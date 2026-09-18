@@ -537,15 +537,6 @@ export default function ChatGeneratorView() {
               </svg>
               Max: {maxCookingTime} min
             </span>
-            <button
-              onClick={() => setIsProfileModalOpen(true)}
-              className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 hover:underline ml-1"
-            >
-              <span>Edit Preferences</span>
-              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-              </svg>
-            </button>
           </div>
         </div>
 
@@ -892,18 +883,6 @@ export default function ChatGeneratorView() {
               accept="image/*"
               className="hidden"
             />
-
-            {/* Profile Button */}
-            <button
-              type="button"
-              onClick={() => setIsProfileModalOpen(true)}
-              className="p-2.5 text-gray-500 hover:text-emerald-600 dark:text-gray-400 dark:hover:text-emerald-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors shrink-0"
-              title="Edit Profile & Preferences"
-            >
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-              </svg>
-            </button>
 
 
 
