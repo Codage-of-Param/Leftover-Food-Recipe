@@ -259,12 +259,9 @@ export default function ProfileAllergyModal() {
                   </div>
                 </div>
                 <div className="text-right">
-                  <span className="inline-block px-3 py-1 bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400 text-xs font-bold uppercase tracking-wider rounded-lg mb-2">
-                    Level {userProfile.level} Rescuer
-                  </span>
                   <button 
                     onClick={logout}
-                    className="block text-sm font-bold text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 transition-colors ml-auto bg-red-50 dark:bg-red-900/20 px-3 py-1 rounded-lg"
+                    className="hidden sm:block text-sm font-bold text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 transition-colors ml-auto bg-red-50 dark:bg-red-900/20 px-3 py-1 rounded-lg"
                   >
                     Sign Out
                   </button>
@@ -290,6 +287,14 @@ export default function ProfileAllergyModal() {
                   />
                 </button>
               </div>
+
+              {/* Mobile-only Sign Out Button */}
+              <button 
+                onClick={logout}
+                className="block sm:hidden w-full mt-2 text-sm font-bold text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 transition-colors bg-red-50 dark:bg-red-900/20 px-4 py-3 rounded-2xl"
+              >
+                Sign Out
+              </button>
             </motion.div>
           )}
 
