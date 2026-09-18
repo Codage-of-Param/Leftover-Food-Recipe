@@ -1,129 +1,28 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { 
+  getAllergenKeywords, 
+  checkRecipeViolatesAllergensOrDiet,
+  validateAiRecipeResponse 
+} from "../../../utils/llmValidator";
+import { extractIngredients } from "../../../utils/ingredientParser";
+import { calculateRescueScore } from "../../../utils/scoreEngine";
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
 const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
 
-// Common food-related keywords to extract ingredients from natural language
-const STOP_WORDS = new Set([
-  "recipe", "recipes", "make", "cook", "prepare", "with", "using", "from",
-  "my", "the", "a", "an", "and", "or", "for", "me", "some", "quick",
-  "easy", "simple", "delicious", "healthy", "tasty", "best", "good",
-  "leftover", "leftovers", "available", "ingredients", "ingredient",
-  "food", "dish", "meal", "dinner", "lunch", "breakfast", "snack",
-  "please", "can", "you", "i", "have", "got", "want", "need",
-  "something", "anything", "give", "show", "suggest", "generate",
-  "create", "zero", "waste", "zero-waste", "creative", "scanned",
-  "fridge", "pantry", "these", "those", "what", "how", "which",
-  "min", "minute", "minutes", "fast", "under",
-]);
 
-function extractIngredients(text: string): string[] {
-  const cleaned = text
-    .toLowerCase()
-    .replace(/[^a-z0-9\s,]/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
-
-  // Split on commas or "and"
-  const parts = cleaned.split(/,|\band\b/).map(s => s.trim()).filter(Boolean);
-
-  const ingredients: string[] = [];
-  for (const part of parts) {
-    const words = part.split(/\s+/).filter(w => !STOP_WORDS.has(w) && w.length > 1);
-    if (words.length > 0) {
-      ingredients.push(words.join(" "));
-    }
-  }
-  return [...new Set(ingredients)];
-}
-
-const ALLERGEN_KEYWORDS_MAP: Record<string, string[]> = {
-  peanuts: ["peanut", "peanuts", "groundnut", "peanut butter", "peanut oil"],
-  dairy: ["milk", "dairy", "cheese", "butter", "paneer", "cream", "yogurt", "curd", "ghee", "whey", "casein", "lactose", "parmesan", "mozzarella", "cheddar"],
-  gluten: ["gluten", "wheat", "flour", "bread", "pasta", "maida", "barley", "rye", "semolina", "couscous"],
-  sugar: ["sugar", "honey", "maple syrup", "corn syrup", "molasses", "sweetener", "cane sugar"],
-  staples: [],
-  eggs: ["egg", "eggs", "egg white", "egg yolk", "mayo", "mayonnaise"],
-  treenuts: ["nut", "nuts", "almond", "almonds", "cashew", "cashews", "walnut", "walnuts", "pecan", "pistachio", "hazelnut", "macadamia", "pine nut"],
-  shellfish: ["shellfish", "shrimp", "prawn", "crab", "lobster", "clam", "mussel", "oyster", "squid"],
-  soy: ["soy", "soya", "tofu", "edamame", "tempeh", "soy sauce"],
-};
-
-function getAllergenKeywords(allergies: string[]): string[] {
-  const keywords: string[] = [];
-  for (const allergy of allergies) {
-    const clean = allergy.toLowerCase().trim();
-    if (clean.includes(":")) {
-      const [base, spec] = clean.split(":");
-      if (ALLERGEN_KEYWORDS_MAP[base]) {
-        keywords.push(...ALLERGEN_KEYWORDS_MAP[base]);
-      } else {
-        keywords.push(base);
-      }
-      if (spec) keywords.push(spec.trim());
-    } else if (ALLERGEN_KEYWORDS_MAP[clean]) {
-      keywords.push(...ALLERGEN_KEYWORDS_MAP[clean]);
-    } else if (clean) {
-      keywords.push(clean);
-    }
-  }
-  return [...new Set(keywords.filter(Boolean))];
-}
-
-function checkRecipeViolatesAllergensOrDiet(
-  recipe: any,
-  allergenKeywords: string[],
-  dietPref: string
-): boolean {
-  const ingredients: string[] = Array.isArray(recipe.ingredients_list)
-    ? recipe.ingredients_list
-    : Array.isArray(recipe.ingredients)
-    ? recipe.ingredients.map((i: any) => (typeof i === "string" ? i : i.name || ""))
-    : [];
-
-  const allText = [
-    recipe.title || "",
-    recipe.description || recipe.desc || "",
-    ...ingredients,
-    ...(Array.isArray(recipe.instructions) ? recipe.instructions : [recipe.instructions || ""])
-  ].join(" ").toLowerCase();
-
-  // 1. Check Allergens
-  for (const kw of allergenKeywords) {
-    if (kw && allText.includes(kw.toLowerCase())) {
-      return true; // Violates allergen!
-    }
-  }
-
-  // 2. Check Dietary Preference
-  const nonVegKeywords = ["chicken", "beef", "pork", "meat", "lamb", "mutton", "fish", "salmon", "tuna", "prawn", "shrimp", "seafood", "bacon", "turkey"];
-  const nonVeganKeywords = [...nonVegKeywords, "milk", "cheese", "butter", "paneer", "cream", "yogurt", "curd", "ghee", "egg", "eggs", "honey"];
-
-  if (dietPref === "Vegetarian") {
-    if (recipe.isVeg === false || recipe.is_veg === false) return true;
-    for (const kw of nonVegKeywords) {
-      if (allText.includes(kw)) return true;
-    }
-  } else if (dietPref === "Vegan") {
-    if (recipe.isVeg === false || recipe.is_veg === false) return true;
-    for (const kw of nonVeganKeywords) {
-      if (allText.includes(kw)) return true;
-    }
-  }
-
-  return false;
-}
 
 async function saveAiRecipesToDb(rawText: string): Promise<string> {
   try {
-    let cleanText = rawText.trim();
-    if (cleanText.startsWith("```json")) cleanText = cleanText.replace("```json", "").trim();
-    if (cleanText.startsWith("```")) cleanText = cleanText.replace("```", "").trim();
-    if (cleanText.endsWith("```")) cleanText = cleanText.slice(0, -3).trim();
+    const ai_recipes = validateAiRecipeResponse(rawText);
     
-    const parsedJson = JSON.parse(cleanText);
-    const ai_recipes = Array.isArray(parsedJson) ? parsedJson : (parsedJson.recipes || []);
+    // MATHEMATICAL RESCUE SCORE OVERRIDE
+    ai_recipes.forEach((r: any) => {
+      if (r.ingredients && Array.isArray(r.ingredients)) {
+        r.score = calculateRescueScore(r.ingredients);
+      }
+    });
     
     const dbPayload = ai_recipes.map((r: any) => {
       if (!r.id) r.id = crypto.randomUUID();
