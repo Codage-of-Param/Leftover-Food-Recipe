@@ -4,7 +4,7 @@ import React from "react";
 import { useApp } from "@/context/AppContext";
 
 export default function Sidebar() {
-  const { activeTab, setActiveTab, urgentItemsCount, savedRecipeIds, isMobileSidebarOpen, setIsMobileSidebarOpen, userProfile, setIsProfileModalOpen } = useApp();
+  const { activeTab, setActiveTab, urgentItemsCount, savedRecipeIds, isMobileSidebarOpen, setIsMobileSidebarOpen, userProfile, setIsProfileModalOpen, dietaryPreference } = useApp();
 
   const navItems: Array<{
     id: "dashboard" | "inventory" | "recipes" | "saved" | "chat-generator";
@@ -160,7 +160,7 @@ export default function Sidebar() {
             {userProfile?.name || "Chef"}
           </p>
           <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-            {userProfile?.dietaryPreference !== "Any" ? userProfile?.dietaryPreference : "Edit Profile"}
+            {dietaryPreference !== "Any" ? dietaryPreference : "Edit Profile"}
           </p>
         </div>
       </div>
