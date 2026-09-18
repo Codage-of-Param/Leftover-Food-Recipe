@@ -17,7 +17,8 @@ export const options = {
 };
 
 export default function () {
-  const url = 'http://localhost:3000/api/chat';
+  // Use TARGET_URL from env or default to localhost
+  const url = __ENV.TARGET_URL || 'http://localhost:3000/api/chat';
   
   const payload = JSON.stringify({
     userMessage: "I have eggs, milk, and bread. What can I make?",
