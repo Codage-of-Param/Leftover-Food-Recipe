@@ -599,6 +599,8 @@ export default function ChatGeneratorView() {
                       ? "max-w-[92%] sm:max-w-[85%] bg-emerald-600 text-white rounded-br-xs"
                       : msg.isError
                       ? "max-w-[92%] sm:max-w-[85%] bg-red-50 dark:bg-red-950/40 text-red-800 dark:text-red-200 border border-red-200 dark:border-red-900/50 rounded-bl-xs"
+                      : (msg.recipeCards && msg.recipeCards.length > 0) || msg.scanResults
+                      ? "w-[96%] max-w-[96%] sm:max-w-[90%] bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-100 rounded-bl-xs"
                       : "max-w-[92%] sm:max-w-[85%] bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-100 rounded-bl-xs"
                   }`}
                 >

@@ -434,7 +434,7 @@ Each recipe object MUST have:
 
     return NextResponse.json(
       {
-        error: "AI service is currently unavailable. Please verify API keys in frontend/.env.local."
+        error: "AI service is currently unavailable. If you are in production (e.g. Vercel), please ensure OPENROUTER_API_KEY or GEMINI_API_KEY are added to your Environment Variables in the project settings."
       },
       { status: 500 }
     );
