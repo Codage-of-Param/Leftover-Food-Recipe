@@ -358,7 +358,7 @@ export default function SignInView() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="chef@kitchen.com"
+                placeholder="you@example.com"
                 className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-gray-50/50 dark:bg-gray-700/50 dark:text-white text-sm"
               />
             </div>
@@ -439,7 +439,7 @@ export default function SignInView() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="chef@kitchen.com"
+                placeholder="you@example.com"
                 className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-gray-50/50 dark:bg-gray-700/50 dark:text-white text-sm"
               />
             </div>
@@ -527,7 +527,7 @@ export default function SignInView() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="chef@kitchen.com"
+                placeholder="you@example.com"
                 className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-amber-500 bg-gray-50/50 dark:bg-gray-700/50 dark:text-white text-sm"
               />
             </div>
