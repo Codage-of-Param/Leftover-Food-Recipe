@@ -90,7 +90,7 @@ export default function RecipeCarousel({ recipes }: RecipeCarouselProps) {
           style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
         >
           {recipes.map((recipe, idx) => (
-            <div key={idx} className="snap-center shrink-0 w-[260px] xs:w-[280px] sm:w-[320px] h-full flex items-stretch">
+            <div key={idx} className="snap-center shrink-0 w-[280px] xs:w-[320px] sm:w-[360px] h-full flex items-stretch">
               <RecipeChatCard recipe={recipe} isActive={idx === activeIndex} />
             </div>
           ))}

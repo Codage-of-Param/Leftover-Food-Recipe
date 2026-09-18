@@ -459,12 +459,12 @@ export default function ScannerModal() {
 
           <div className="flex-1 overflow-y-auto flex flex-col md:flex-row bg-gray-50 dark:bg-gray-950">
             {/* Image Preview Area */}
-            <div className="w-full md:w-3/5 bg-black relative min-h-[300px] flex items-center justify-center p-4 border-r border-gray-100 dark:border-gray-800">
+            <div className="w-full md:w-3/5 bg-black relative min-h-[200px] md:min-h-[300px] flex items-center justify-center p-4 border-r border-gray-100 dark:border-gray-800">
               <div className="relative inline-block max-w-full max-h-full" ref={containerRef}>
                 <img
                   src={scannerImage.url}
                   alt="Scanned Fridge"
-                  className="max-w-full max-h-[60vh] md:max-h-[80vh] object-contain rounded-lg shadow-lg"
+                  className="max-w-full max-h-[40vh] md:max-h-[80vh] object-contain rounded-lg shadow-lg"
                 />
 
                 {isScanning && (
