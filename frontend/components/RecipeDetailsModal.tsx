@@ -10,7 +10,7 @@ interface RecipeDetailsModalProps {
 }
 
 export default function RecipeDetailsModal({ recipe, onClose }: RecipeDetailsModalProps) {
-  const { cookRecipe } = useApp();
+  const { cookRecipe, toggleSaveRecipe, isRecipeSaved } = useApp();
   const [isCooking, setIsCooking] = useState(false);
   const [isDone, setIsDone] = useState(false);
   const [checkedSteps, setCheckedSteps] = useState<number[]>([]);
@@ -128,11 +128,25 @@ export default function RecipeDetailsModal({ recipe, onClose }: RecipeDetailsMod
                 {recipe.score || 97}/100 Rescue Match
               </span>
               <div className="flex gap-2">
-                <button className="w-10 h-10 bg-white/10 hover:bg-white/20 transition-colors rounded-full flex items-center justify-center text-white/80 hover:text-white">
-                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
-                  </svg>
-                </button>
+                {(() => {
+                  const recipeId = recipe.id || `chat-rec-${recipe.title.replace(/\s+/g, "-").toLowerCase()}`;
+                  const saved = isRecipeSaved(recipeId);
+                  return (
+                    <button 
+                      onClick={() => toggleSaveRecipe(recipeId, recipe)}
+                      className={`w-10 h-10 transition-colors rounded-full flex items-center justify-center ${
+                        saved 
+                          ? "bg-emerald-500/30 text-emerald-300 border border-emerald-400/40" 
+                          : "bg-white/10 hover:bg-white/20 text-white/80 hover:text-white"
+                      }`}
+                      title={saved ? "Saved to Bookmarks" : "Save Recipe"}
+                    >
+                      <svg className="w-5 h-5" fill={saved ? "currentColor" : "none"} viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                      </svg>
+                    </button>
+                  );
+                })()}
                 <button onClick={onClose} className="w-10 h-10 bg-white/10 hover:bg-white/20 transition-colors rounded-full flex items-center justify-center text-white/80 hover:text-white">
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -533,8 +547,27 @@ export default function RecipeDetailsModal({ recipe, onClose }: RecipeDetailsMod
           <div className="text-gray-400 text-sm hidden sm:block">
             Rescues <span className="text-[#F0803F] font-bold">{availableIngredients} pantry items</span>
           </div>
-          <div className="flex items-center gap-4 w-full sm:w-auto justify-end">
+          <div className="flex items-center gap-3 sm:gap-4 w-full sm:w-auto justify-end">
             <button onClick={onClose} className="text-gray-400 font-bold hover:text-white px-2">Close</button>
+            {(() => {
+              const recipeId = recipe.id || `chat-rec-${recipe.title.replace(/\s+/g, "-").toLowerCase()}`;
+              const saved = isRecipeSaved(recipeId);
+              return (
+                <button
+                  onClick={() => toggleSaveRecipe(recipeId, recipe)}
+                  className={`px-4 sm:px-5 py-3 rounded-xl font-bold text-sm transition-all flex items-center gap-2 active:scale-95 ${
+                    saved 
+                      ? "bg-emerald-800/60 text-emerald-300 border border-emerald-600/40" 
+                      : "bg-[#3A332C] hover:bg-[#4A433C] text-white border border-[#4A433C]"
+                  }`}
+                >
+                  <svg className="w-4 h-4" fill={saved ? "currentColor" : "none"} viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                  </svg>
+                  {saved ? "Saved" : "Save"}
+                </button>
+              );
+            })()}
             <button
               onClick={isDone ? undefined : handleCook}
               disabled={isCooking || isDone}

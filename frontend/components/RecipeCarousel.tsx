@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState } from "react";
 import RecipeChatCard, { ChatRecipeData } from "./RecipeChatCard";
 
 interface RecipeCarouselProps {
@@ -17,7 +17,6 @@ export default function RecipeCarousel({ recipes }: RecipeCarouselProps) {
     const scrollPosition = scrollRef.current.scrollLeft;
     const cardWidth = scrollRef.current.scrollWidth / recipes.length;
     
-    // Calculate which card is most visible
     const newIndex = Math.round(scrollPosition / cardWidth);
     
     if (newIndex !== activeIndex && newIndex >= 0 && newIndex < recipes.length) {
@@ -37,39 +36,39 @@ export default function RecipeCarousel({ recipes }: RecipeCarouselProps) {
 
   if (!recipes || recipes.length === 0) return null;
 
-  // If there's only 1 recipe, just render it normally without carousel controls
+  // Single recipe — render full width, no carousel
   if (recipes.length === 1) {
     return (
-      <div className="mt-3">
+      <div className="mt-3 w-full">
         <RecipeChatCard recipe={recipes[0]} isActive={true} />
       </div>
     );
   }
 
   return (
-    <div className="mt-4 w-full flex flex-col relative">
+    <div className="mt-3 sm:mt-4 w-full flex flex-col relative">
       {/* Carousel Header Controls */}
-      <div className="flex items-center justify-between mb-3 px-2">
-        <div className="text-xs font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+      <div className="flex items-center justify-between mb-2 sm:mb-3 px-1">
+        <div className="text-[10px] sm:text-xs font-bold text-gray-500 uppercase tracking-wider flex items-center gap-1.5">
+          <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-500 animate-pulse"></span>
           Suggested Recipes
         </div>
-        <div className="flex items-center gap-3">
-          <div className="bg-white dark:bg-gray-800 px-3 py-1 rounded-full text-xs font-bold text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700 shadow-sm">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <div className="bg-white dark:bg-gray-800 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-bold text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700 shadow-sm">
             {activeIndex + 1} / {recipes.length}
           </div>
-          <div className="flex gap-1.5">
+          <div className="flex gap-1">
             <button 
               onClick={() => scrollToIndex(Math.max(0, activeIndex - 1))}
               disabled={activeIndex === 0}
-              className="w-8 h-8 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-600 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gray-50 hover:scale-105 active:scale-95 transition-all shadow-sm"
+              className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-600 dark:text-gray-300 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gray-50 hover:scale-105 active:scale-95 transition-all shadow-sm text-xs sm:text-sm"
             >
               ←
             </button>
             <button 
               onClick={() => scrollToIndex(Math.min(recipes.length - 1, activeIndex + 1))}
               disabled={activeIndex === recipes.length - 1}
-              className="w-8 h-8 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-600 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gray-50 hover:scale-105 active:scale-95 transition-all shadow-sm"
+              className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-600 dark:text-gray-300 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gray-50 hover:scale-105 active:scale-95 transition-all shadow-sm text-xs sm:text-sm"
             >
               →
             </button>
@@ -79,18 +78,18 @@ export default function RecipeCarousel({ recipes }: RecipeCarouselProps) {
 
       {/* Horizontally scrollable container */}
       <div className="relative w-full overflow-hidden">
-        {/* Left and Right Gradient Masks for smooth scroll edge fading */}
-        <div className="absolute top-0 left-0 w-8 h-full bg-gradient-to-r from-white dark:from-[#0a0a0a] to-transparent z-10 pointer-events-none" />
-        <div className="absolute top-0 right-0 w-8 h-full bg-gradient-to-l from-white dark:from-[#0a0a0a] to-transparent z-10 pointer-events-none" />
+        {/* Gradient masks — hidden on small screens to avoid clipping */}
+        <div className="absolute top-0 left-0 w-6 h-full bg-gradient-to-r from-white dark:from-[#0a0a0a] to-transparent z-10 pointer-events-none hidden sm:block" />
+        <div className="absolute top-0 right-0 w-6 h-full bg-gradient-to-l from-white dark:from-[#0a0a0a] to-transparent z-10 pointer-events-none hidden sm:block" />
 
         <div 
           ref={scrollRef}
           onScroll={handleScroll}
-          className="flex gap-4 sm:gap-5 overflow-x-auto snap-x snap-mandatory py-4 px-4 xs:px-8 scrollbar-hide"
+          className="flex gap-3 sm:gap-5 overflow-x-auto snap-x snap-mandatory py-2 sm:py-4 px-1 sm:px-6 scrollbar-hide"
           style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
         >
           {recipes.map((recipe, idx) => (
-            <div key={idx} className="snap-center shrink-0 w-[280px] xs:w-[320px] sm:w-[360px] h-full flex items-stretch">
+            <div key={idx} className="snap-center shrink-0 w-[calc(100%-8px)] sm:w-[340px] md:w-[360px] flex items-stretch">
               <RecipeChatCard recipe={recipe} isActive={idx === activeIndex} />
             </div>
           ))}
@@ -98,15 +97,15 @@ export default function RecipeCarousel({ recipes }: RecipeCarouselProps) {
       </div>
       
       {/* Pagination Dots */}
-      <div className="flex justify-center gap-2 mt-2">
+      <div className="flex justify-center gap-1.5 sm:gap-2 mt-1 sm:mt-2">
         {recipes.map((_, idx) => (
           <button
             key={idx}
             onClick={() => scrollToIndex(idx)}
             className={`h-1.5 rounded-full transition-all duration-300 ${
               idx === activeIndex 
-                ? "w-6 bg-emerald-500" 
-                : "w-2 bg-gray-300 dark:bg-gray-700 hover:bg-gray-400"
+                ? "w-5 sm:w-6 bg-emerald-500" 
+                : "w-1.5 sm:w-2 bg-gray-300 dark:bg-gray-700 hover:bg-gray-400"
             }`}
           />
         ))}
