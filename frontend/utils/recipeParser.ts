@@ -24,6 +24,7 @@ export function parseRecipeFromMessage(text: string): ChatRecipeData[] | null {
       const validRecipes = recipesArray.filter(r => r && r.title && Array.isArray(r.ingredients));
       if (validRecipes.length > 0) {
         return validRecipes.map(recipeObj => ({
+          id: recipeObj.id,
           title: recipeObj.title,
           desc: recipeObj.desc || recipeObj.description,
           score: recipeObj.score || 95,

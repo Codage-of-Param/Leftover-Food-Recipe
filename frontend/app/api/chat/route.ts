@@ -115,7 +115,7 @@ function checkRecipeViolatesAllergensOrDiet(
   return false;
 }
 
-async function saveAiRecipesToDb(rawText: string) {
+async function saveAiRecipesToDb(rawText: string): Promise<string> {
   try {
     let cleanText = rawText.trim();
     if (cleanText.startsWith("```json")) cleanText = cleanText.replace("```json", "").trim();
@@ -125,25 +125,31 @@ async function saveAiRecipesToDb(rawText: string) {
     const parsedJson = JSON.parse(cleanText);
     const ai_recipes = Array.isArray(parsedJson) ? parsedJson : (parsedJson.recipes || []);
     
-    const dbPayload = ai_recipes.map((r: any) => ({
-      id: crypto.randomUUID(),
-      title: r.title || "AI Generated Recipe",
-      description: r.desc || r.description || "",
-      cook_time_minutes: Number(r.timeMinutes || r.cook_time || 30),
-      servings: Number(r.servings || 2),
-      instructions: JSON.stringify(r.instructions || []),
-      ingredients_list: r.ingredients?.map((i:any) => typeof i === 'string' ? i : i.name) || [],
-      source: "AI_GENERATED",
-      category: "Zero-Waste"
-    }));
+    const dbPayload = ai_recipes.map((r: any) => {
+      if (!r.id) r.id = crypto.randomUUID();
+      return {
+        id: r.id,
+        title: r.title || "AI Generated Recipe",
+        description: r.desc || r.description || "",
+        cook_time_minutes: Number(r.timeMinutes || r.cook_time || 30),
+        servings: Number(r.servings || 2),
+        instructions: JSON.stringify(r.instructions || []),
+        ingredients_list: r.ingredients?.map((i:any) => typeof i === 'string' ? i : i.name) || [],
+        source: "AI_GENERATED",
+        category: "Zero-Waste"
+      };
+    });
     
     if (dbPayload.length > 0) {
       const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
       await supabase.from('recipes').insert(dbPayload);
+      // Return the updated JSON with injected IDs
+      return "```json\n" + JSON.stringify(ai_recipes, null, 2) + "\n```";
     }
   } catch (e) {
     console.warn("Failed to insert chat recipes into DB:", e);
   }
+  return rawText;
 }
 
 function formatDbRecipesToJson(dbRecipes: any[]): string {
@@ -380,7 +386,8 @@ Each recipe object MUST have:
             const data = await openrouterResponse.json();
             const assistantText = data.choices?.[0]?.message?.content;
             if (assistantText) {
-              await saveAiRecipesToDb(assistantText);
+              const updatedText = await saveAiRecipesToDb(assistantText);
+              data.choices[0].message.content = updatedText;
             }
             return NextResponse.json(data);
           }
@@ -413,14 +420,14 @@ Each recipe object MUST have:
           const gData = await geminiRes.json();
           const generatedText = gData.candidates?.[0]?.content?.parts?.[0]?.text;
           if (generatedText) {
-            await saveAiRecipesToDb(generatedText);
+            const updatedText = await saveAiRecipesToDb(generatedText);
             
             return NextResponse.json({
               choices: [
                 {
                   message: {
                     role: "assistant",
-                    content: generatedText
+                    content: updatedText
                   }
                 }
               ]
