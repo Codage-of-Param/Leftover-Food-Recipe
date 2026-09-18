@@ -195,14 +195,22 @@ async def generate_recipes(req: GenerationRequest):
                 "X-Title": "Leftover Food Recipe App"
             }
             
-            # List of reliable free OpenRouter models
-            free_models = [
-                "qwen/qwen-2-7b-instruct:free",
-                "mistralai/mistral-7b-instruct:free",
-                "microsoft/phi-3-mini-128k-instruct:free",
-                "huggingfaceh4/zephyr-7b-beta:free",
-                "openchat/openchat-7b:free"
-            ]
+            # Dynamically fetch free OpenRouter models
+            free_models = []
+            try:
+                models_res = requests.get("https://openrouter.ai/api/v1/models", timeout=5)
+                if models_res.status_code == 200:
+                    data = models_res.json()
+                    free_models = [
+                        m['id'] for m in data.get('data', [])
+                        if m.get('pricing', {}).get('prompt') == '0' and m.get('pricing', {}).get('completion') == '0'
+                    ][:5]
+            except Exception as e:
+                logger.warning(f"Failed to dynamically fetch OpenRouter models: {e}")
+            
+            # Fallback
+            if not free_models:
+                free_models = ["qwen/qwen-2-7b-instruct:free", "google/gemma-2-9b-it:free"]
             
             response = None
             response_data = None
@@ -251,9 +259,36 @@ async def generate_recipes(req: GenerationRequest):
             parsed_json = json.loads(raw_text.strip())
             
             ai_recipes = parsed_json.get("recipes", [])
+            db_insert_payload = []
             for r in ai_recipes:
                 if not r.get("id"):
                     r["id"] = str(uuid.uuid4())
+                    
+                # Prepare for DB insertion
+                db_recipe = {
+                    "id": r["id"],
+                    "title": r.get("title", "AI Generated Recipe"),
+                    "description": r.get("desc", ""),
+                    "cook_time_minutes": int(r.get("timeMinutes", 30)),
+                    "servings": int(r.get("servings", 2)),
+                    "instructions": json.dumps(r.get("instructions", [])),
+                    "ingredients_list": [i.get("name") for i in r.get("ingredients", [])],
+                    "source": "AI_GENERATED",
+                    "category": "Zero-Waste"
+                }
+                db_insert_payload.append(db_recipe)
+                
+            if db_insert_payload:
+                try:
+                    supa_headers = {
+                        "apikey": SUPABASE_KEY,
+                        "Authorization": f"Bearer {SUPABASE_KEY}",
+                        "Content-Type": "application/json",
+                        "Prefer": "return=minimal"
+                    }
+                    requests.post(f"{SUPABASE_URL}/rest/v1/recipes", headers=supa_headers, json=db_insert_payload, timeout=5)
+                except Exception as e:
+                    logger.warning(f"Failed to insert AI recipes into Supabase: {e}")
                     
             all_recipes.extend(ai_recipes)
         except Exception as e:

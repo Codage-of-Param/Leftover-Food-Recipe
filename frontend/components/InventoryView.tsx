@@ -14,28 +14,12 @@ export default function InventoryView() {
     searchQuery,
     setSearchQuery,
     showToast,
-    setIsGenerateModalOpen
+    setIsGenerateModalOpen,
+    setIsScannerModalOpen
   } = useApp();
 
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
   const handleScanClick = () => {
-    fileInputRef.current?.click();
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    if (file.size > 1024 * 1024) {
-      showToast("File is too large! Maximum allowed size is 1MB.", "alert");
-      e.target.value = '';
-      return;
-    }
-
-    const imageUrl = URL.createObjectURL(file);
-    setScannerImage({ url: imageUrl, file });
-    e.target.value = '';
+    setIsScannerModalOpen(true);
   };
 
   const [isDragging, setIsDragging] = useState(false);
@@ -115,13 +99,7 @@ export default function InventoryView() {
         </div>
 
         <div className="flex items-center space-x-3">
-          <input 
-            type="file" 
-            accept="image/*" 
-            ref={fileInputRef} 
-            onChange={handleFileChange} 
-            className="hidden" 
-          />
+
           <button
             onClick={handleScanClick}
             className="flex items-center space-x-2 px-4 py-2.5 bg-white dark:bg-gray-800 border border-emerald-300 dark:border-emerald-700 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 text-sm font-semibold rounded-xl shadow-xs transition-all disabled:opacity-50"

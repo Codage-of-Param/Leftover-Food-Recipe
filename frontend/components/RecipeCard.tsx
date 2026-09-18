@@ -62,9 +62,6 @@ export default function RecipeCard({ recipe }: { recipe: Recipe }) {
           </svg>
         </button>
 
-        <div className="bg-black/60 backdrop-blur-xs text-white text-xs font-medium px-2.5 py-1 rounded-md mt-auto">
-          Saves ${recipe.wasteSaved.toFixed(2)} waste
-        </div>
       </div>
       
       {/* Content */}

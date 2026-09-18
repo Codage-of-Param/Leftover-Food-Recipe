@@ -147,6 +147,8 @@ interface AppContextType {
   toggleTheme: () => void;
   isChatOpen: boolean;
   setIsChatOpen: (open: boolean) => void;
+  isScannerModalOpen: boolean;
+  setIsScannerModalOpen: (open: boolean) => void;
 }
 
 const INITIAL_INVENTORY: InventoryItem[] = [
@@ -383,6 +385,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [theme, setTheme] = useState<"light" | "dark">("dark");
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [isScannerModalOpen, setIsScannerModalOpen] = useState(false);
 
   const [toast, setToast] = useState<ToastInfo | null>(null);
 
@@ -1022,7 +1025,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         theme,
         toggleTheme,
         isChatOpen,
-        setIsChatOpen
+        setIsChatOpen,
+        isScannerModalOpen,
+        setIsScannerModalOpen
       }}
     >
       {children}

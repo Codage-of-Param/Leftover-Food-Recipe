@@ -20,7 +20,8 @@ export default function DashboardView() {
     setScannerImage,
     showToast,
     cookedHistory,
-    userProfile
+    userProfile,
+    setIsScannerModalOpen
   } = useApp();
 
   const [reviews, setReviews] = useState<any[]>([]);
@@ -39,25 +40,8 @@ export default function DashboardView() {
     fetchReviews();
   }, [userProfile?.id]);
 
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
   const handleScanClick = () => {
-    fileInputRef.current?.click();
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    if (file.size > 1024 * 1024) {
-      showToast("File is too large! Maximum allowed size is 1MB.", "alert");
-      e.target.value = '';
-      return;
-    }
-
-    const imageUrl = URL.createObjectURL(file);
-    setScannerImage({ url: imageUrl, file });
-    e.target.value = '';
+    setIsScannerModalOpen(true);
   };
 
   const [isDragging, setIsDragging] = useState(false);
@@ -143,13 +127,7 @@ export default function DashboardView() {
         </div>
 
         <div className="flex items-center space-x-3">
-          <input 
-            type="file" 
-            accept="image/*" 
-            ref={fileInputRef} 
-            onChange={handleFileChange} 
-            className="hidden" 
-          />
+
           <button
             onClick={handleScanClick}
             className={`flex items-center space-x-1.5 px-4 py-2 bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-800/50 text-sm font-semibold rounded-xl shadow-xs transition-colors hover:bg-emerald-100 dark:hover:bg-emerald-900/50 text-emerald-800 dark:text-emerald-300`}

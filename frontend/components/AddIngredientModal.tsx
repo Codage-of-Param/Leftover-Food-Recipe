@@ -45,13 +45,13 @@ export default function AddIngredientModal() {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs animate-fade-in">
       <div 
-        className="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-gray-100 relative overflow-hidden"
+        className="bg-white dark:bg-gray-900 rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-gray-100 dark:border-gray-800 relative overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between mb-5">
           <div>
-            <h2 className="text-xl font-bold text-gray-900">Add Pantry Ingredient</h2>
-            <p className="text-xs text-gray-500">Track shelf-life to prioritize rescue recommendations.</p>
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white">Add Pantry Ingredient</h2>
+            <p className="text-xs text-gray-500 dark:text-gray-400">Track shelf-life to prioritize rescue recommendations.</p>
           </div>
           <button
             onClick={() => setIsAddModalOpen(false)}
@@ -65,7 +65,7 @@ export default function AddIngredientModal() {
 
         {/* Quick Suggestion Chips */}
         <div className="mb-4">
-          <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider block mb-1.5">
+          <label className="text-[11px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider block mb-1.5">
             Quick Add Frequent Leftovers
           </label>
           <div className="flex flex-wrap gap-1.5">
@@ -77,7 +77,7 @@ export default function AddIngredientModal() {
                 className={`text-xs px-2.5 py-1 rounded-lg border transition-all ${
                   name === chip.name
                     ? "bg-emerald-600 text-white border-emerald-600"
-                    : "bg-gray-50 text-gray-700 border-gray-200 hover:bg-gray-100"
+                    : "bg-gray-50 dark:bg-gray-800/50 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-800"
                 }`}
               >
                 + {chip.name}
@@ -88,34 +88,34 @@ export default function AddIngredientModal() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="text-xs font-semibold text-gray-700 block mb-1">Ingredient Name</label>
+            <label className="text-xs font-semibold text-gray-700 dark:text-gray-300 block mb-1">Ingredient Name</label>
             <input
               type="text"
               required
               placeholder="e.g. Fresh Basil, Cooked Lentils, Tofu..."
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full px-3.5 py-2.5 text-sm rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-gray-50/50"
+              className="w-full px-3.5 py-2.5 text-sm rounded-xl border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-gray-50/50 dark:bg-gray-800/50 dark:text-white"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-xs font-semibold text-gray-700 block mb-1">Quantity / Weight</label>
+              <label className="text-xs font-semibold text-gray-700 dark:text-gray-300 block mb-1">Quantity / Weight</label>
               <input
                 type="text"
                 placeholder="e.g. 200g, 2 cups, 3 pcs"
                 value={quantity}
                 onChange={(e) => setQuantity(e.target.value)}
-                className="w-full px-3.5 py-2.5 text-sm rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-gray-50/50"
+                className="w-full px-3.5 py-2.5 text-sm rounded-xl border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-gray-50/50 dark:bg-gray-800/50 dark:text-white"
               />
             </div>
             <div>
-              <label className="text-xs font-semibold text-gray-700 block mb-1">Category</label>
+              <label className="text-xs font-semibold text-gray-700 dark:text-gray-300 block mb-1">Category</label>
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value as InventoryItem["category"])}
-                className="w-full px-3 py-2.5 text-sm rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
+                className="w-full px-3 py-2.5 text-sm rounded-xl border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white dark:bg-gray-800 dark:text-white"
               >
                 <option value="Produce">Produce (Veggies / Fruits)</option>
                 <option value="Dairy">Dairy & Cheese</option>
@@ -128,7 +128,7 @@ export default function AddIngredientModal() {
 
           <div>
             <div className="flex items-center justify-between mb-1">
-              <label className="text-xs font-semibold text-gray-700">Days Until Spoilage</label>
+              <label className="text-xs font-semibold text-gray-700 dark:text-gray-300">Days Until Spoilage</label>
               <span className={`text-xs font-bold px-2 py-0.5 rounded ${daysLeft <= 2 ? "bg-red-50 text-red-600" : "bg-emerald-50 text-emerald-700"}`}>
                 {daysLeft} {daysLeft === 1 ? "day" : "days"} left
               </span>
@@ -149,10 +149,11 @@ export default function AddIngredientModal() {
               id="urgent"
               checked={isUrgent || daysLeft <= 2}
               onChange={(e) => setIsUrgent(e.target.checked)}
-              className="rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer"
+              disabled={daysLeft <= 2}
+              className="w-4 h-4 text-emerald-600 rounded border-gray-300 dark:border-gray-600 focus:ring-emerald-500 disabled:opacity-50"
             />
-            <label htmlFor="urgent" className="text-xs font-medium text-gray-700 cursor-pointer select-none">
-              Mark as <span className="font-bold text-red-600">Urgent Perishable</span> (Prioritize in rescue algorithms)
+            <label htmlFor="urgent" className="text-xs text-gray-600 dark:text-gray-300 font-medium">
+              Mark as <span className="text-red-500 font-bold">Urgent Perishable</span> <span className="text-gray-400 dark:text-gray-500 font-normal hidden sm:inline">(Prioritize in rescue algorithms)</span>
             </label>
           </div>
 

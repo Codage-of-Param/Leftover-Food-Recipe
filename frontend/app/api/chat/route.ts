@@ -115,6 +115,37 @@ function checkRecipeViolatesAllergensOrDiet(
   return false;
 }
 
+async function saveAiRecipesToDb(rawText: string) {
+  try {
+    let cleanText = rawText.trim();
+    if (cleanText.startsWith("```json")) cleanText = cleanText.replace("```json", "").trim();
+    if (cleanText.startsWith("```")) cleanText = cleanText.replace("```", "").trim();
+    if (cleanText.endsWith("```")) cleanText = cleanText.slice(0, -3).trim();
+    
+    const parsedJson = JSON.parse(cleanText);
+    const ai_recipes = Array.isArray(parsedJson) ? parsedJson : (parsedJson.recipes || []);
+    
+    const dbPayload = ai_recipes.map((r: any) => ({
+      id: crypto.randomUUID(),
+      title: r.title || "AI Generated Recipe",
+      description: r.desc || r.description || "",
+      cook_time_minutes: Number(r.timeMinutes || r.cook_time || 30),
+      servings: Number(r.servings || 2),
+      instructions: JSON.stringify(r.instructions || []),
+      ingredients_list: r.ingredients?.map((i:any) => typeof i === 'string' ? i : i.name) || [],
+      source: "AI_GENERATED",
+      category: "Zero-Waste"
+    }));
+    
+    if (dbPayload.length > 0) {
+      const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      await supabase.from('recipes').insert(dbPayload);
+    }
+  } catch (e) {
+    console.warn("Failed to insert chat recipes into DB:", e);
+  }
+}
+
 function formatDbRecipesToJson(dbRecipes: any[]): string {
   const recipes = dbRecipes.map(r => {
     const ingredientsList = r.ingredients_list || [];
@@ -301,12 +332,24 @@ Each recipe object MUST have:
 
     // 1. Try OpenRouter free models API
     if (openrouterKey && !openrouterKey.includes("mock-or-set-your-key-here")) {
-      const OPENROUTER_MODELS = [
-        "qwen/qwen-2-7b-instruct:free",
-        "mistralai/mistral-7b-instruct:free",
-        "meta-llama/llama-3.1-8b-instruct:free",
-        "google/gemma-2-9b-it:free"
-      ];
+      let OPENROUTER_MODELS: string[] = [];
+      try {
+        const modelsRes = await fetch("https://openrouter.ai/api/v1/models");
+        if (modelsRes.ok) {
+          const modelsData = await modelsRes.json();
+          OPENROUTER_MODELS = (modelsData.data || [])
+            .filter((m: any) => m.pricing?.prompt === "0" && m.pricing?.completion === "0")
+            .map((m: any) => m.id)
+            .slice(0, 5);
+        }
+      } catch (err) {
+        console.warn("Failed to dynamically fetch OpenRouter models", err);
+      }
+      
+      // Fallback just in case the API is completely unreachable
+      if (OPENROUTER_MODELS.length === 0) {
+        OPENROUTER_MODELS = ["qwen/qwen-2-7b-instruct:free", "google/gemma-2-9b-it:free"];
+      }
 
       for (const m of OPENROUTER_MODELS) {
         try {
@@ -335,6 +378,10 @@ Each recipe object MUST have:
 
           if (openrouterResponse.ok) {
             const data = await openrouterResponse.json();
+            const assistantText = data.choices?.[0]?.message?.content;
+            if (assistantText) {
+              await saveAiRecipesToDb(assistantText);
+            }
             return NextResponse.json(data);
           }
         } catch (orErr) {
@@ -366,6 +413,8 @@ Each recipe object MUST have:
           const gData = await geminiRes.json();
           const generatedText = gData.candidates?.[0]?.content?.parts?.[0]?.text;
           if (generatedText) {
+            await saveAiRecipesToDb(generatedText);
+            
             return NextResponse.json({
               choices: [
                 {

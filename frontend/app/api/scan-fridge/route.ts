@@ -68,12 +68,31 @@ export async function POST(req: Request) {
     const arrayBuffer = await imageFile.arrayBuffer();
     const base64 = Buffer.from(arrayBuffer).toString("base64");
 
-    const OPENROUTER_VISION_MODELS = [
-      "google/gemini-2.0-flash-lite-preview-02-05:free",
-      "meta-llama/llama-3.2-90b-vision-instruct:free",
-      "qwen/qwen-vl-plus:free",
-      "inclusionai/ling-3.0-flash-vl:free"
-    ];
+    let OPENROUTER_VISION_MODELS: string[] = [];
+    try {
+      const modelsRes = await fetch("https://openrouter.ai/api/v1/models");
+      if (modelsRes.ok) {
+        const modelsData = await modelsRes.json();
+        OPENROUTER_VISION_MODELS = (modelsData.data || [])
+          .filter((m: any) => 
+            m.pricing?.prompt === "0" && 
+            m.pricing?.completion === "0" && 
+            (m.architecture?.modality?.includes("image") || m.architecture?.input_modalities?.includes("image"))
+          )
+          .map((m: any) => m.id)
+          .slice(0, 5);
+      }
+    } catch (err) {
+      console.warn("Failed to dynamically fetch OpenRouter vision models", err);
+    }
+    
+    // Fallback just in case the API is completely unreachable
+    if (OPENROUTER_VISION_MODELS.length === 0) {
+      OPENROUTER_VISION_MODELS = [
+        "google/gemini-2.0-flash-lite-preview-02-05:free",
+        "meta-llama/llama-3.2-90b-vision-instruct:free"
+      ];
+    }
 
     let rawText = "";
     let openrouterSuccess = false;

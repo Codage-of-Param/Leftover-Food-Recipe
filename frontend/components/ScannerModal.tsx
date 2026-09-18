@@ -15,7 +15,7 @@ interface DetectedItem {
 }
 
 export default function ScannerModal() {
-  const { scannerImage, setScannerImage, addInventoryItem, addScannedFridgeRecipes, setActiveTab, showToast, setIsGenerateModalOpen } = useApp();
+  const { scannerImage, setScannerImage, addInventoryItem, addScannedFridgeRecipes, setActiveTab, showToast, setIsGenerateModalOpen, isScannerModalOpen, setIsScannerModalOpen } = useApp();
   const [isScanning, setIsScanning] = useState(true);
   const [items, setItems] = useState<DetectedItem[]>([]);
   const [scanError, setScanError] = useState<string | null>(null);
@@ -79,11 +79,120 @@ export default function ScannerModal() {
     }
   }, [scannerImage]);
 
-  if (!scannerImage) return null;
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 1024 * 1024) {
+      showToast("File is too large! Maximum allowed size is 1MB.", "alert");
+      e.target.value = '';
+      return;
+    }
+    const imageUrl = URL.createObjectURL(file);
+    setScannerImage({ url: imageUrl, file });
+    e.target.value = '';
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const file = e.dataTransfer.files?.[0];
+    if (!file || !file.type.startsWith("image/")) return;
+    if (file.size > 1024 * 1024) {
+      showToast("File is too large! Maximum allowed size is 1MB.", "alert");
+      return;
+    }
+    const imageUrl = URL.createObjectURL(file);
+    setScannerImage({ url: imageUrl, file });
+  };
 
   const handleClose = () => {
     setScannerImage(null);
+    setIsScannerModalOpen(false);
   };
+
+  if (!isScannerModalOpen) return null;
+
+  if (!scannerImage) {
+    return (
+      <AnimatePresence>
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-md p-4 md:p-8">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+            className="bg-white dark:bg-gray-900 w-full max-w-lg rounded-3xl overflow-hidden flex flex-col shadow-2xl relative"
+          >
+            {/* Header */}
+            <div className="px-6 py-4 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-white dark:bg-gray-900 z-10 shrink-0">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center space-x-2">
+                <span className="text-emerald-600 dark:text-emerald-400">
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                </span>
+                <span>Scan Your Fridge</span>
+              </h2>
+              <button
+                onClick={handleClose}
+                className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              >
+                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="p-6 flex flex-col gap-6 items-center text-center">
+              <p className="text-gray-500 dark:text-gray-400 text-sm">
+                Upload a photo of your fridge, and our AI will detect your ingredients instantly!
+              </p>
+
+              <div 
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+                onClick={() => fileInputRef.current?.click()}
+                className={`w-full h-48 border-2 border-dashed rounded-2xl flex flex-col items-center justify-center cursor-pointer transition-all ${isDragging ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20' : 'border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50'}`}
+              >
+                <svg className="w-10 h-10 text-emerald-500 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                </svg>
+                <span className="font-semibold text-gray-700 dark:text-gray-300">Drag & Drop Image</span>
+                <span className="text-xs text-gray-500 mt-1">or click to browse (Max 1MB)</span>
+              </div>
+
+              <div className="flex w-full flex-col sm:flex-row gap-4">
+                <button onClick={() => cameraInputRef.current?.click()} className="flex-1 py-3 px-4 flex items-center justify-center gap-2 rounded-xl border border-gray-200 dark:border-gray-700 font-semibold text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                  <svg className="w-5 h-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                  Camera
+                </button>
+                <button onClick={() => fileInputRef.current?.click()} className="flex-1 py-3 px-4 flex items-center justify-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 font-semibold text-white transition-colors">
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                  Gallery
+                </button>
+              </div>
+              
+              <input type="file" accept="image/*" ref={fileInputRef} onChange={handleFileChange} className="hidden" />
+              <input type="file" accept="image/*" capture="environment" ref={cameraInputRef} onChange={handleFileChange} className="hidden" />
+            </div>
+          </motion.div>
+        </div>
+      </AnimatePresence>
+    );
+  }
 
   const confirmSuggestion = (id: string) => {
     setItems((prev) =>
