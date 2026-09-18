@@ -52,14 +52,14 @@ export default function RecipeChatCard({ recipe, isActive = true }: RecipeChatCa
     <>
       <div 
         onClick={() => setShowModal(true)}
-        className={`group bg-white dark:bg-gray-800 border rounded-3xl p-4 xs:p-5 cursor-pointer transition-all duration-500 w-full flex flex-col h-full overflow-hidden
+        className={`group bg-white dark:bg-gray-800 border rounded-2xl sm:rounded-3xl p-3 xs:p-4 sm:p-5 cursor-pointer transition-all duration-500 w-full flex flex-col h-full overflow-hidden
           ${isActive 
             ? 'border-emerald-300 dark:border-emerald-700 shadow-xl scale-[1.02]' 
             : 'border-emerald-50 dark:border-gray-700/50 hover:border-emerald-200 dark:hover:border-emerald-800 scale-95 opacity-80'}
         `}
       >
         {/* Header */}
-        <div className="flex items-start justify-between gap-4 mb-4">
+        <div className="flex items-start justify-between gap-2 sm:gap-4 mb-3">
           <div className="flex-1">
             <div className="flex flex-wrap items-center gap-2 mb-2.5">
               <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 px-3 py-1 rounded-full border border-emerald-200/50 flex items-center gap-1 shadow-sm">
@@ -77,11 +77,11 @@ export default function RecipeChatCard({ recipe, isActive = true }: RecipeChatCa
                 </span>
               )}
             </div>
-            <h4 className="text-xl font-extrabold text-gray-900 dark:text-white tracking-tight line-clamp-2 leading-tight group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+            <h4 className="text-lg sm:text-xl font-extrabold text-gray-900 dark:text-white tracking-tight line-clamp-2 leading-tight group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
               {recipe.title}
             </h4>
             {recipe.desc && (
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 line-clamp-2 leading-relaxed">
+              <p className="text-[11px] sm:text-xs text-gray-500 dark:text-gray-400 mt-1.5 line-clamp-2 leading-relaxed">
                 {recipe.desc}
               </p>
             )}
@@ -104,19 +104,19 @@ export default function RecipeChatCard({ recipe, isActive = true }: RecipeChatCa
         </div>
 
         {/* Ingredients Summary */}
-        <div className="mt-2 mb-5 bg-gray-50 dark:bg-gray-900/40 p-4 rounded-2xl border border-gray-100 dark:border-gray-700/50 backdrop-blur-sm">
-          <div className="flex justify-between items-center mb-2.5">
+        <div className="mt-1 sm:mt-2 mb-3 sm:mb-4 bg-gray-50 dark:bg-gray-900/40 p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-gray-100 dark:border-gray-700/50 backdrop-blur-sm">
+          <div className="flex justify-between items-center mb-2">
             <span className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest flex items-center gap-1.5">
               <svg className="w-3.5 h-3.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
               </svg>
               Pantry Check
             </span>
-            <span className="text-xs font-bold text-emerald-700 dark:text-emerald-400">
+            <span className="text-[10px] sm:text-xs font-bold text-emerald-700 dark:text-emerald-400">
               {availableIngredients}/{totalIngredients} Available
             </span>
           </div>
-          <div className="flex gap-1.5 overflow-hidden h-2.5 rounded-full bg-gray-200 dark:bg-gray-700 p-0.5 shadow-inner">
+          <div className="flex gap-1.5 overflow-hidden h-2 rounded-full bg-gray-200 dark:bg-gray-700 p-0.5 shadow-inner">
             {recipe.ingredients.map((ing, idx) => (
               <div 
                 key={idx} 
@@ -124,14 +124,14 @@ export default function RecipeChatCard({ recipe, isActive = true }: RecipeChatCa
               />
             ))}
           </div>
-          <p className="text-[11px] text-gray-500 dark:text-gray-400 mt-3 truncate font-medium">
+          <p className="text-[10px] sm:text-[11px] text-gray-500 dark:text-gray-400 mt-2 sm:mt-3 truncate font-medium">
             Uses: {recipe.ingredients.slice(0, 3).map(i => i.name).join(", ")}
             {recipe.ingredients.length > 3 && "..."}
           </p>
         </div>
 
         {/* Nutrition Bar */}
-        <div className="flex items-center justify-between gap-1 xs:gap-2 py-2.5 xs:py-3 px-3 xs:px-4 bg-white dark:bg-gray-800 rounded-2xl text-[10px] xs:text-xs font-bold text-gray-700 dark:text-gray-300 border border-gray-100 dark:border-gray-700 mt-auto shadow-sm">
+        <div className="flex items-center justify-between gap-1 xs:gap-2 py-2 px-2.5 xs:px-3 bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl text-[10px] xs:text-xs font-bold text-gray-700 dark:text-gray-300 border border-gray-100 dark:border-gray-700 mt-auto shadow-sm">
           <div className="flex items-center gap-1.5">
             <svg className="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -155,21 +155,16 @@ export default function RecipeChatCard({ recipe, isActive = true }: RecipeChatCa
         </div>
 
         {/* Actions */}
-        <div className="mt-5 pt-5 border-t border-gray-100 dark:border-gray-700/50 flex flex-col gap-3">
+        <div className="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-gray-100 dark:border-gray-700/50 flex flex-col gap-2 sm:gap-3">
           <button 
-            className="group/btn relative w-full bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold py-3.5 px-4 rounded-2xl transition-all duration-300 shadow-md active:scale-95 flex items-center justify-center gap-2 overflow-hidden"
+            className="group/btn relative w-full bg-emerald-600 hover:bg-emerald-700 text-white text-[13px] sm:text-sm font-bold py-2.5 sm:py-3.5 px-4 rounded-xl sm:rounded-2xl transition-all duration-300 shadow-md active:scale-95 flex items-center justify-center gap-2 overflow-hidden"
           >
             <span className="relative z-10">Cook This Recipe</span>
-            <svg className="w-4 h-4 relative z-10 group-hover/btn:translate-x-1 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 relative z-10 group-hover/btn:translate-x-1 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" />
             </svg>
             <div className="absolute inset-0 bg-white/10 translate-y-full group-hover/btn:translate-y-0 transition-transform duration-300 ease-out z-0"></div>
           </button>
-          <div className="text-center group-hover:bg-gray-50 dark:group-hover:bg-gray-700/50 py-1.5 rounded-lg transition-colors cursor-pointer">
-            <span className="text-[10px] text-gray-400 dark:text-gray-500 font-bold uppercase tracking-widest group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
-              View Full Recipe Details
-            </span>
-          </div>
         </div>
       </div>
 
