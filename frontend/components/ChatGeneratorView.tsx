@@ -53,7 +53,7 @@ const INITIAL_MESSAGES: ChatMessage[] = [
 ];
 
 export default function ChatGeneratorView() {
-  const { showToast, inventory, allergies, dietaryPreference, maxCookingTime, userProfile, addScannedFridgeRecipes, setIsProfileModalOpen, setIsMobileSidebarOpen } = useApp();
+  const { showToast, inventory, allergies, dietaryPreference, maxCookingTime, userProfile, addScannedFridgeRecipes, setIsProfileModalOpen, setIsMobileSidebarOpen, checkGuestLimit } = useApp();
   
   // Persistent Chat History
   const [messages, setMessages] = useState<ChatMessage[]>(() => {
@@ -294,6 +294,8 @@ export default function ChatGeneratorView() {
   };
 
   const handleSendMessage = async (customText?: string, customAtts?: AttachmentFile[]) => {
+    if (!checkGuestLimit("chat")) return;
+    
     const textToSend = (customText !== undefined ? customText : inputValue).trim();
     const attsToSend = customAtts !== undefined ? customAtts : draftAttachments;
 

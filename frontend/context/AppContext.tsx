@@ -149,6 +149,9 @@ interface AppContextType {
   setIsChatOpen: (open: boolean) => void;
   isScannerModalOpen: boolean;
   setIsScannerModalOpen: (open: boolean) => void;
+  showAuthModal: boolean;
+  setShowAuthModal: (open: boolean) => void;
+  checkGuestLimit: (type: "recipe" | "chat") => boolean;
 }
 
 const INITIAL_INVENTORY: InventoryItem[] = [
@@ -388,6 +391,40 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [isScannerModalOpen, setIsScannerModalOpen] = useState(false);
 
   const [toast, setToast] = useState<ToastInfo | null>(null);
+  
+  const [showAuthModal, setShowAuthModal] = useState(false);
+
+  const checkGuestLimit = (type: "recipe" | "chat"): boolean => {
+    if (isAuthenticated) return true;
+    
+    const maxRecipes = 1;
+    const maxChats = 3;
+    
+    if (typeof window === "undefined") return true;
+
+    try {
+      if (type === "recipe") {
+        const count = parseInt(localStorage.getItem("guest_recipe_count") || "0", 10);
+        if (count >= maxRecipes) {
+          setShowAuthModal(true);
+          return false;
+        }
+        localStorage.setItem("guest_recipe_count", (count + 1).toString());
+        return true;
+      } else {
+        const count = parseInt(localStorage.getItem("guest_chat_count") || "0", 10);
+        if (count >= maxChats) {
+          setShowAuthModal(true);
+          return false;
+        }
+        localStorage.setItem("guest_chat_count", (count + 1).toString());
+        return true;
+      }
+    } catch (e) {
+      console.warn("Local storage error:", e);
+      return true;
+    }
+  };
 
   useEffect(() => {
     // Check active session on mount
@@ -1027,7 +1064,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         isChatOpen,
         setIsChatOpen,
         isScannerModalOpen,
-        setIsScannerModalOpen
+        setIsScannerModalOpen,
+        showAuthModal,
+        setShowAuthModal,
+        checkGuestLimit
+
       }}
     >
       {children}

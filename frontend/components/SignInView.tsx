@@ -8,7 +8,7 @@ import { supabase } from "@/lib/supabase";
 type AuthMode = "signin" | "signup" | "forgot";
 
 export default function SignInView() {
-  const { isAuthenticated, showToast, clearScannedFridgeRecipes } = useApp();
+  const { isAuthenticated, showToast, clearScannedFridgeRecipes, showAuthModal, setShowAuthModal } = useApp();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -39,7 +39,7 @@ export default function SignInView() {
     return emailRegex.test(email.trim());
   };
 
-  if (isAuthenticated) return null;
+  if (isAuthenticated || !showAuthModal) return null;
 
   // ─── Sign Up ───
   const handleSignUp = async (e: React.FormEvent) => {
@@ -595,6 +595,16 @@ export default function SignInView() {
             </motion.button>
           </motion.form>
         )}
+        
+        {/* Close Button if showAuthModal is true (allows guest to back out if they triggered it manually, unless forced?) Wait, if forced they shouldn't close it, but let's give them a close button so they aren't trapped if they want to just stare at the page. Actually, they are trapped. Let's add a close button so they can go back to viewing the page. */}
+        <button 
+          onClick={() => setShowAuthModal(false)}
+          className="absolute top-4 right-4 p-2 text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors z-10"
+        >
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
         
         {/* ─── FOOTER LINKS ─── */}
         <motion.div 

@@ -14,7 +14,8 @@ export default function GenerateRecipeModal() {
     inventory,
     setRecipes,
     setActiveTab,
-    showToast
+    showToast,
+    checkGuestLimit
   } = useApp();
 
   const [localDiet, setLocalDiet] = useState(dietaryPreference);
@@ -36,6 +37,8 @@ export default function GenerateRecipeModal() {
   if (!isGenerateModalOpen) return null;
 
   const handleGenerate = async () => {
+    if (!checkGuestLimit("recipe")) return;
+
     setIsGenerating(true);
     setErrorMessage(null);
     try {

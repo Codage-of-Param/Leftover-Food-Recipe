@@ -15,7 +15,9 @@ export default function Topbar() {
     setIsProfileModalOpen,
     userProfile,
     activeTab,
-    setActiveTab
+    setActiveTab,
+    isAuthenticated,
+    setShowAuthModal
   } = useApp();
 
   if (activeTab === "chat-generator") {
@@ -121,19 +123,28 @@ export default function Topbar() {
           <span className="sm:hidden">+ Add</span>
         </button>
 
-        {/* User Profile Badge */}
-        <button
-          onClick={() => setIsProfileModalOpen(true)}
-          className="flex items-center space-x-2.5 p-1 sm:pl-2 sm:pr-4 sm:py-1.5 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-full transition-colors border border-transparent sm:border-gray-100 dark:sm:border-gray-800"
-          title="Account Profile & Allergies"
-        >
-          <div className="w-8 h-8 rounded-full bg-emerald-600 dark:bg-emerald-700 text-white flex items-center justify-center font-bold text-sm shadow-sm shrink-0">
-            {userProfile?.name ? userProfile.name.charAt(0).toUpperCase() : "U"}
-          </div>
-          <div className="hidden sm:flex flex-col items-start">
-            <span className="text-xs font-bold text-gray-900 dark:text-gray-100 leading-tight">{userProfile?.name || "User"}</span>
-          </div>
-        </button>
+        {/* User Profile / Sign In Badge */}
+        {!isAuthenticated ? (
+          <button
+            onClick={() => setShowAuthModal(true)}
+            className="flex items-center space-x-2.5 p-1 sm:pl-3 sm:pr-4 sm:py-1.5 bg-emerald-100 hover:bg-emerald-200 dark:bg-emerald-900/50 dark:hover:bg-emerald-800/60 rounded-full transition-colors font-semibold text-xs text-emerald-800 dark:text-emerald-100 shadow-sm"
+          >
+            <span>Sign In</span>
+          </button>
+        ) : (
+          <button
+            onClick={() => setIsProfileModalOpen(true)}
+            className="flex items-center space-x-2.5 p-1 sm:pl-2 sm:pr-4 sm:py-1.5 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-full transition-colors border border-transparent sm:border-gray-100 dark:sm:border-gray-800"
+            title="Account Profile & Allergies"
+          >
+            <div className="w-8 h-8 rounded-full bg-emerald-600 dark:bg-emerald-700 text-white flex items-center justify-center font-bold text-sm shadow-sm shrink-0">
+              {userProfile?.name ? userProfile.name.charAt(0).toUpperCase() : "U"}
+            </div>
+            <div className="hidden sm:flex flex-col items-start">
+              <span className="text-xs font-bold text-gray-900 dark:text-gray-100 leading-tight">{userProfile?.name || "User"}</span>
+            </div>
+          </button>
+        )}
       </div>
     </header>
   );

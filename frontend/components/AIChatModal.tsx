@@ -48,6 +48,7 @@ export default function AIChatModal() {
     userProfile,
     addScannedFridgeRecipes,
     setIsProfileModalOpen,
+    checkGuestLimit,
   } = useApp();
   const INITIAL_MESSAGES: ChatMessage[] = [
     {
@@ -230,6 +231,8 @@ export default function AIChatModal() {
   };
 
   const handleSendMessage = async (customText?: string, customAtts?: AttachmentFile[]) => {
+    if (!checkGuestLimit("chat")) return;
+
     const messageText = (customText !== undefined ? customText : inputValue).trim();
     const attsToSend = customAtts !== undefined ? customAtts : draftAttachments;
 
