@@ -50,6 +50,10 @@ export default function SignInView() {
       setAuthError("Please enter a valid email address.");
       return;
     }
+    if (!email.trim().toLowerCase().endsWith("@gmail.com")) {
+      setAuthError("Only Gmail accounts are allowed.");
+      return;
+    }
     if (password.length < 6) {
       setAuthError("Password must be at least 6 characters.");
       return;
@@ -128,6 +132,10 @@ export default function SignInView() {
       setAuthError("Please enter a valid email address.");
       return;
     }
+    if (!email.trim().toLowerCase().endsWith("@gmail.com")) {
+      setAuthError("Only Gmail accounts are allowed.");
+      return;
+    }
 
     setLoading(true);
     setAuthError(null);
@@ -170,6 +178,10 @@ export default function SignInView() {
 
     if (!isValidEmail(email)) {
       setAuthError("Please enter a valid email address.");
+      return;
+    }
+    if (!email.trim().toLowerCase().endsWith("@gmail.com")) {
+      setAuthError("Only Gmail accounts are allowed.");
       return;
     }
     if (newPassword.length < 6) {
