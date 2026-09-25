@@ -153,6 +153,12 @@ export default function ChatGeneratorView() {
     setMessages(INITIAL_MESSAGES);
     try {
       localStorage.removeItem("foodrescue_chat_history");
+      
+      const userId = userProfile?.id || (typeof window !== "undefined" ? localStorage.getItem("guest_user_id") : null) || "00000000-0000-0000-0000-000000000001";
+      fetch(`/api/chat-history?userId=${userId}`, {
+        method: "DELETE",
+      }).catch((err) => console.warn("Failed to clear chat history from Supabase storage:", err));
+
       showToast("Chat history cleared", "info");
     } catch (e) {
       console.warn("Failed to clear chat history", e);

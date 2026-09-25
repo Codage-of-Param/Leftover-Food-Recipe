@@ -132,3 +132,30 @@ export async function POST(req: Request) {
     );
   }
 }
+
+// DELETE /api/chat-history?userId=<uuid>
+export async function DELETE(req: Request) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const userId = searchParams.get("userId") || "00000000-0000-0000-0000-000000000001";
+
+    const supabase = getSupabaseAdmin();
+    const filePath = `${userId}/last_5_chats.json`;
+    
+    await supabase.storage.from(BUCKET_NAME).remove([filePath]);
+    
+    try {
+      await supabase.from("rescue_sessions").delete().eq("id", userId);
+    } catch (dbErr) {
+      // ignore
+    }
+
+    return NextResponse.json({ success: true });
+  } catch (err: any) {
+    console.error("Error deleting chat history from Supabase storage:", err);
+    return NextResponse.json(
+      { error: err?.message || "Failed to clear chat history" },
+      { status: 500 }
+    );
+  }
+}

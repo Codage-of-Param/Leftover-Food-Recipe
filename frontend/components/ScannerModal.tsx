@@ -420,7 +420,7 @@ export default function ScannerModal() {
           initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
-          className="bg-white dark:bg-gray-900 w-full max-w-5xl h-full max-h-[90vh] rounded-3xl overflow-hidden flex flex-col shadow-2xl relative"
+          className="bg-white dark:bg-gray-900 w-full max-w-5xl h-[95vh] md:h-[85vh] max-h-[95vh] rounded-2xl md:rounded-3xl overflow-hidden flex flex-col shadow-2xl relative"
         >
           {/* Header */}
           <div className="px-6 py-4 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-white dark:bg-gray-900 z-10 shrink-0">
@@ -457,14 +457,14 @@ export default function ScannerModal() {
             </div>
           )}
 
-          <div className="flex-1 overflow-y-auto flex flex-col md:flex-row bg-gray-50 dark:bg-gray-950">
+          <div className="flex-1 overflow-hidden flex flex-col md:flex-row bg-gray-50 dark:bg-gray-950">
             {/* Image Preview Area */}
-            <div className="w-full md:w-3/5 bg-black relative min-h-[200px] md:min-h-[300px] flex items-center justify-center p-4 border-r border-gray-100 dark:border-gray-800">
-              <div className="relative inline-block max-w-full max-h-full" ref={containerRef}>
+            <div className="w-full md:w-3/5 bg-black relative h-[35%] md:h-full min-h-[200px] md:min-h-0 flex items-center justify-center p-2 md:p-4 border-b md:border-b-0 md:border-r border-gray-100 dark:border-gray-800 shrink-0">
+              <div className="relative inline-block max-w-full max-h-full h-full flex items-center justify-center" ref={containerRef}>
                 <img
                   src={scannerImage.url}
                   alt="Scanned Fridge"
-                  className="max-w-full max-h-[40vh] md:max-h-[80vh] object-contain rounded-lg shadow-lg"
+                  className="max-w-full max-h-full object-contain rounded-lg shadow-lg"
                 />
 
                 {isScanning && (
@@ -517,8 +517,8 @@ export default function ScannerModal() {
             </div>
 
             {/* List & Controls Area */}
-            <div className="w-full md:w-2/5 flex flex-col h-full max-h-full overflow-hidden bg-white dark:bg-gray-900">
-              <div className="p-5 border-b border-gray-100 dark:border-gray-800 shrink-0">
+            <div className="w-full md:w-2/5 flex flex-col flex-1 h-[65%] md:h-full overflow-hidden bg-white dark:bg-gray-900">
+              <div className="p-4 md:p-5 border-b border-gray-100 dark:border-gray-800 shrink-0">
                 <h3 className="text-lg font-bold text-gray-900 dark:text-white">Review Detected Items</h3>
                 <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                   Please confirm uncertain items before generating recipes.
@@ -654,7 +654,7 @@ export default function ScannerModal() {
               </div>
 
               {/* Footer Actions */}
-              <div className="p-4 sm:p-5 border-t border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-900/50 shrink-0 flex gap-3">
+              <div className="p-4 sm:p-5 border-t border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-900/50 shrink-0 flex flex-col sm:flex-row gap-3">
                 <button
                   onClick={finalizeAndSaveMock}
                   disabled={isScanning || items.length === 0}
