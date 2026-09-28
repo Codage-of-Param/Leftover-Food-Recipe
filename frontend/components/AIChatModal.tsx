@@ -78,9 +78,9 @@ export default function AIChatModal() {
   // Sync / Load last 5 chat history from Supabase storage when modal opens
   useEffect(() => {
     if (!isChatOpen) return;
-    const userId = userProfile?.id || (typeof window !== "undefined" ? localStorage.getItem("guest_user_id") : null) || "00000000-0000-0000-0000-000000000001";
+    if (!userProfile?.id) return;
     
-    fetch(`/api/chat-history?userId=${userId}`)
+    fetch(`/api/chat-history?userId=${userProfile.id}`)
       .then((res) => res.json())
       .then((data) => {
         if (data && Array.isArray(data.history) && data.history.length > 0) {
@@ -112,13 +112,12 @@ export default function AIChatModal() {
       }));
       localStorage.setItem("foodrescue_chat_history", JSON.stringify(cleanMessages));
 
-      const userId = userProfile?.id || (typeof window !== "undefined" ? localStorage.getItem("guest_user_id") : null) || "00000000-0000-0000-0000-000000000001";
-      if (cleanMessages.length > 1) {
+      if (userProfile?.id && cleanMessages.length > 1) {
         fetch("/api/chat-history", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            userId,
+            userId: userProfile.id,
             messages: cleanMessages,
           }),
         }).catch((err) => console.warn("Failed to sync chat history to Supabase storage:", err));
